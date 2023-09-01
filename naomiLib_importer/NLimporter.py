@@ -933,7 +933,6 @@ def data2blender(mesh_vertex: list, mesh_uvs: list, faces: list, meshes: list, m
         # add viewport color to object
         new_mat = bpy.data.materials.new(f"object_{i}_mat")
         new_mat.diffuse_color = meshColors[i]
-        
         # Ensure the material has a node tree
         if new_mat.use_nodes is False:
             new_mat.use_nodes = True
@@ -954,6 +953,9 @@ def data2blender(mesh_vertex: list, mesh_uvs: list, faces: list, meshes: list, m
 
             # Connect the texture node to the desired input node (e.g., Principled BSDF)
             input_node = material_node_tree.nodes.get('Principled BSDF')
+            input_node.inputs['Specular'].default_value = 0
+            input_node.inputs['Roughness'].default_value = 0.0
+            input_node.inputs['Metallic'].default_value = 0.0
             material_node_tree.links.new(texture_node.outputs['Color'], input_node.inputs['Base Color'])
             material_node_tree.links.new(texture_node.outputs['Alpha'], input_node.inputs['Alpha'])
             # print(new_object.naomi_param.listType)
@@ -964,8 +966,8 @@ def data2blender(mesh_vertex: list, mesh_uvs: list, faces: list, meshes: list, m
                 texture_node.image.alpha_mode = "CHANNEL_PACKED"
                 new_mat.blend_method = "HASHED"
         # print(f"new_mat.diffuse_color: {new_mat.diffuse_color} , mesh_colors: {meshColors}")
-        new_mat.roughness = spec_int
-        new_mat.metallic = 0.5
+        # new_mat.roughness = spec_int
+
 
         new_object.data.materials.append(new_mat)
 
